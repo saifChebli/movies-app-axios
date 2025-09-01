@@ -1,22 +1,27 @@
 import React from 'react'
 import axios from 'axios'
 import { useState } from 'react'
+import { SyncLoader } from 'react-spinners'
 
 const MoviesList = () => {
 
   const [movieData, setMovieData] = useState([]);
+  const [isLoading , setIsLoading] = useState(false)
+ 
 
   async function fetchMovies() {
+    setIsLoading(true)
     try {
-      const response = await axios.get('https://api.themoviedb.org/3/movie/popular?api_key=60daa0f089260251deb196abd125f78e&language=en-US&page=1')
-      console.log(response.data.results)
+      const response = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US&page=1`)
       setMovieData(response.data.results)
     } catch (error) {
       console.log(error)
+    } finally {
+      setIsLoading(false)
     }
   } 
 
-  console.log(movieData);
+
 
   return (
     <div className='min-h-screen bg-gray-900 text-white p-6'>
@@ -30,6 +35,8 @@ const MoviesList = () => {
             Search
         </button>
       </div>
+
+      {isLoading && <SyncLoader color='#ffffff' style={{display : 'flex' , justifyContent :'center' , alignItems : 'center'}} />}
       <div className='grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
         {
         movieData.map((item) => (
